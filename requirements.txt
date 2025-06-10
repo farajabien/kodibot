@@ -1,5 +1,5 @@
 openai==1.85.0
 python-dotenv
-"fastapi[standard]"
-"uvicorn[standard]"
+fastapi[standard]
+uvicorn[standard]
 gunicorn==20.0.4
