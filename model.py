@@ -9,7 +9,7 @@ client = OpenAI(
     api_key=api_key
 )
 
-chat_logs = {}
+chat_logs = []
 
 def generate_answer(prompt, max_tokens=100):
     chat_logs.append({
