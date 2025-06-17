@@ -1,8 +1,10 @@
-from model import generate_answer
+from model import generate_answer, get_intent
 from fastapi import FastAPI, Request
 from models import ChatRequest
+from kodibot import Kodibot
 
 app = FastAPI()
+route = Kodibot()
 
 @app.get('/')
 def home():
@@ -10,6 +12,12 @@ def home():
 
 @app.post('/chat')
 async def chat(request: ChatRequest):
-    user_message = request.message
-    response = generate_answer(user_message)
-    return {"response": response}
+    intent = get_intent(request)
+    if intent == 'greeting':
+        return route.handle_greeting()
+    if intent == 'goodbye':
+        return route.handle_goodbye()
+    if intent == 'query':
+        return route.handle_citizen(request)
+
+

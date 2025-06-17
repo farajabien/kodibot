@@ -3,3 +3,4 @@ venv/
 .env
 intents.json
 service-account.json
+test.py
