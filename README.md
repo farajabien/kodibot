@@ -207,7 +207,7 @@ pip install -r requirements.txt
 cd kodibot-landing && pnpm install && cd ..
 
 # 2. Configuration
-cp .env.example .env  # Éditer avec votre OPENAI_API_KEY
+cp .env.example .env  # Puis éditer avec votre OPENAI_API_KEY
 
 # 3. Base de données avec données test RDC
 python3 scripts/seed_data.py
@@ -233,7 +233,7 @@ pnpm install && pnpm dev
 git clone <repo-url> && cd kodibot/kodibot-landing
 pnpm install
 pnpm dev          # Landing page: http://localhost:3000
-pnpm storybook    # Composants: http://localhost:6006 (Phase 2)
+# pnpm storybook    # Composants: http://localhost:6006 (Phase 2)
 ```
 
 ### **🔧 Configuration Environnement**
@@ -308,8 +308,8 @@ python3 tests/test_intent.py   # Classification 14 catégories RDC
 python3 tests/test_chat.py     # API + liaison OTP + données
 python3 tests/test_openai.py   # Diagnostic quota handling
 
-# Tests frontend (Phase 2)
-cd kodibot-landing && pnpm test
+# Tests frontend (Phase 2 - à configurer)
+# cd kodibot-landing && pnpm test
 ```
 
 ### **🎮 Test Démo Interactive (Product/Design)**
@@ -447,7 +447,7 @@ git commit -m "feat: description"
 
 # 2. Tests obligatoires
 python3 tests/test_*.py  # Backend
-cd kodibot-landing && pnpm test  # Frontend
+# cd kodibot-landing && pnpm test  # Frontend (Phase 2)
 
 # 3. Pull Request
 git push origin feature/nom-feature
