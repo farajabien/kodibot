@@ -4,6 +4,10 @@ Eliminates hardcoded URLs and provides consistent test settings
 """
 
 import os
+from src.test_data import (
+    get_primary_phone, get_secondary_phone, get_primary_citizen_id, 
+    get_test_otp, TEST_MESSAGES, EXPECTED_RESPONSES
+)
 
 # Base URLs for testing
 DEFAULT_API_BASE = "http://localhost:8000"
@@ -16,33 +20,21 @@ class TestConfig:
     API_BASE = os.getenv("TEST_API_BASE", DEFAULT_API_BASE)
     FRONTEND_BASE = os.getenv("TEST_FRONTEND_BASE", DEFAULT_FRONTEND_BASE)
     
-    # Test Data
-    TEST_PHONE_LINKED = "+243123456789"      # Pre-linked user (Jean Kabila)
-    TEST_PHONE_UNLINKED = "+243987654321"    # Unlinked user (Marie Tshisekedi)
-    TEST_CITIZEN_ID = "CIT123456789"          # Valid citizen ID
-    TEST_OTP_CODE = "123456"                  # Standard test OTP
+    # Test Data (imported from centralized test_data module)
+    TEST_PHONE_LINKED = get_primary_phone()         # Pre-linked user (Jean Kabila)
+    TEST_PHONE_UNLINKED = get_secondary_phone()     # Unlinked user (Marie Tshisekedi)
+    TEST_CITIZEN_ID = get_primary_citizen_id()       # Valid citizen ID
+    TEST_OTP_CODE = get_test_otp()                   # Standard test OTP
     
     # Test Timeouts
     API_TIMEOUT = 30  # seconds
     FRONTEND_TIMEOUT = 10  # seconds
     
-    # Test Messages
-    TEST_MESSAGES = {
-        "greeting": "Bonjour",
-        "tax_info": "Quel est mon solde fiscal?",
-        "parcels": "Mes parcelles",
-        "procedures": "Comment renouveler mon permis?",
-        "profile": "Quel est mon nom?",
-        "goodbye": "Au revoir"
-    }
+    # Test Messages (imported from centralized module)
+    TEST_MESSAGES = TEST_MESSAGES
     
-    # Expected Responses (for validation)
-    EXPECTED_RESPONSES = {
-        "linking_required": "Bienvenue sur KodiBOT! 📋 Pour accéder",
-        "quota_exceeded": "temporairement indisponible",
-        "otp_generated": "Code OTP généré",
-        "linking_success": "Liaison réussie"
-    }
+    # Expected Responses (imported from centralized module)
+    EXPECTED_RESPONSES = EXPECTED_RESPONSES
     
     @classmethod
     def get_api_url(cls, endpoint: str) -> str:

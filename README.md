@@ -8,6 +8,7 @@ KodiBOT est un assistant conversationnel intelligent conçu spécifiquement pour
 - **`src/prompts.py`** - Gestion unifiée des prompts système
 - **`src/openai_client.py`** - Client OpenAI centralisé avec gestion d'erreurs
 - **`src/logger.py`** - Système de logging structuré
+- **`src/test_data.py`** - 🆕 Données de test centralisées (zéro duplication)
 - **`tests/config.py`** - Configuration centralisée des tests
 
 ### **Fonctionnalités Principales**
@@ -80,6 +81,12 @@ pytest tests/test_integration.py -v       # Tests end-to-end
 pytest tests/ --cov=src --cov-report=html
 ```
 
+### 📋 Données de Test Centralisées
+- **`src/test_data.py`** - Source unique pour tous les données de test
+- **Citoyens Test**: Jean Kabila (lié), Marie Tshisekedi (non-lié)
+- **Données DRC**: Taxes, parcelles, procédures authentiques
+- **Zéro Duplication**: Élimine hardcoding dans tests et seed scripts
+
 ## 📚 API Endpoints
 
 ### Chat Principal
@@ -121,8 +128,8 @@ GET /analytics/popular-intents # Statistiques usage
 ## 🏗️ Structure du Projet (Optimisée)
 
 ```
-kodibot/                     # 🎯 16 fichiers Python total
-├── src/                     # 📁 9 fichiers - Code source optimisé
+kodibot/                     # 🎯 17 fichiers Python total
+├── src/                     # 📁 10 fichiers - Code source optimisé
 │   ├── __init__.py         # Package initialization (v2.0.0)
 │   ├── database.py         # Modèles SQLAlchemy + ORM
 │   ├── kodibot.py         # Logic conversationnelle DRC
@@ -131,7 +138,8 @@ kodibot/                     # 🎯 16 fichiers Python total
 │   ├── models.py          # ✅ Modèles Pydantic (maintenu)
 │   ├── openai_client.py   # 🆕 Client OpenAI centralisé
 │   ├── prompts.py         # 🆕 Prompts système DRC centralisés
-│   └── services.py        # Services métier + handlers
+│   ├── services.py        # Services métier + handlers
+│   └── test_data.py       # 🆕 Données test centralisées (zéro duplication)
 ├── tests/                  # 📋 4 fichiers - Tests complets
 │   ├── config.py          # 🆕 Configuration centralisée tests
 │   ├── test_chat.py       # Tests chat flow principal
@@ -145,12 +153,12 @@ kodibot/                     # 🎯 16 fichiers Python total
 ```
 
 ### 📊 Métriques Codebase
-- **📁 Total fichiers Python**: 16 (optimisé)
-- **🔄 Duplications**: 0 (éliminées)
-- **🎯 Fichiers core**: 9 (src/)
+- **📁 Total fichiers Python**: 17 (optimisé)
+- **🔄 Duplications**: 0 (éliminées complètement)
+- **🎯 Fichiers core**: 10 (src/)
 - **🧪 Fichiers tests**: 4 (consolidés)
 - **📋 Couverture**: Tests complets E2E
-- **🔧 Configuration**: Centralisée
+- **🔧 Configuration**: Centralisée + données test unifiées
 
 ## 🔍 Exemples d'Utilisation
 
@@ -203,9 +211,10 @@ kodibot/                     # 🎯 16 fichiers Python total
 
 ### Optimisations Finales 🎯
 - 🧹 **Cleanup Système** - Suppression `.DS_Store`, fichiers cache
-- 📁 **Structure Rationalisée** - 9 fichiers src/, 4 fichiers tests/
+- 📁 **Structure Rationalisée** - 10 fichiers src/, 4 fichiers tests/
 - 🔄 **Maintenabilité** - Zero duplication, dépendances claires
-- 📊 **Métriques** - 16 fichiers Python total (optimisé)
+- 📊 **Métriques** - 17 fichiers Python total (optimisé)
+- 🆕 **Données Centralisées** - `src/test_data.py` élimine toute duplication
 
 ## 📞 Support
 
@@ -224,10 +233,10 @@ Ce projet est développé pour les services gouvernementaux de la République D�
 
 **KodiBOT v2.0.0 - Architecture Optimisée** ✨
 
-✅ **Codebase Clean**: 16 fichiers Python focalisés  
-✅ **Zero Duplications**: Architecture moderne maintenue  
+✅ **Codebase Clean**: 17 fichiers Python focalisés  
+✅ **Zero Duplications**: Données test centralisées, architecture moderne  
 ✅ **Tests Complets**: Couverture E2E avec 4 fichiers consolidés  
-✅ **Systèmes Centralisés**: Prompts, OpenAI, logging, configuration  
-✅ **Performance**: Structure optimisée pour la maintenabilité  
+✅ **Systèmes Centralisés**: Prompts, OpenAI, logging, config, test data  
+✅ **Performance**: Structure optimisée, maintenabilité maximale  
 
 **Votre assistant numérique pour les services citoyens RDC** 🇨🇩 
