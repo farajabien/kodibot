@@ -54,7 +54,7 @@ class Kodibot:
             "Merci pour votre confiance. Kodibot vous dit à la prochaine sur la plateforme Kodinet."
         ]
         return random.choice(goodbye_responses)
-    
+
     def handle_system_unavailable(self) -> str:
         """
         Handle system unavailable scenarios (quota exceeded, maintenance)

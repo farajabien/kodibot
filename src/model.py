@@ -12,30 +12,30 @@ def generate_answer(prompt, system_prompt=MAIN_SYSTEM_PROMPT):
 
     try:
         client = get_client()
-        completion = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {
-                    "role": "system",
-                    "content": system_prompt
-                },
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ],
-            temperature=0.2
-        )
+    completion = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "system",
+                "content": system_prompt
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+        temperature=0.2
+    )
 
-        response = completion.choices[0].message.content
+    response = completion.choices[0].message.content
 
-        chat_logs.append({
-            "role": "assistant",
-            "content": response
-        })
+    chat_logs.append({
+        "role": "assistant",
+        "content": response
+    })
 
-        print(chat_logs)
-        return response
+    print(chat_logs)
+    return response
         
     except Exception as e:
         # Handle OpenAI quota exceeded or other API errors
