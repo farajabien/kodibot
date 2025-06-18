@@ -1,6 +1,6 @@
 import random
-from data import user_tax_data
-from model import generate_answer
+from .data import user_tax_data
+from .model import generate_answer
 import json
 
 class Kodibot:

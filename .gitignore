@@ -3,4 +3,5 @@ venv/
 .env
 intents.json
 service-account.json
-test.py
+*.log
+.DS_Store
