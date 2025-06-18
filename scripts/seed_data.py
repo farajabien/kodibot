@@ -8,7 +8,7 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from datetime import datetime
-from src.database import get_db, Citizens, Taxes, Procedures, Parcels, create_tables
+from src.database import get_db, Citizens, Taxes, Procedures, Parcels, LinkedUsers, create_tables
 import json
 
 def seed_database():

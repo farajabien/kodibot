@@ -3,17 +3,17 @@
 Test script for OpenAI API to diagnose confidence issues
 """
 
-from openai import OpenAI
 import os
-from dotenv import load_dotenv
 import json
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-load_dotenv()
+from src.openai_client import get_openai_client, validate_openai_config
 
 def test_openai_basic():
     """Test basic OpenAI functionality"""
     try:
-        client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+        client = get_openai_client()
         print('🧪 Test de l\'API OpenAI...')
         
         completion = client.chat.completions.create(
@@ -37,7 +37,7 @@ def test_openai_basic():
 def test_intent_classification():
     """Test the intent classification with OpenAI"""
     try:
-        client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+        client = get_openai_client()
         print('\n🎯 Test de classification d\'intention...')
         
         test_messages = [
@@ -94,7 +94,7 @@ Message utilisateur :
 def test_generate_answer():
     """Test the generate_answer function"""
     try:
-        from model import generate_answer
+        from src.model import generate_answer
         print('\n💬 Test de génération de réponse...')
         
         test_prompt = "Bonjour, je suis Jean Kabila et je veux connaître mon solde de taxe foncière"
@@ -110,13 +110,11 @@ if __name__ == "__main__":
     print("🔬 Diagnostic OpenAI pour KodiBOT")
     print("=" * 50)
     
-    # Check API key
-    api_key = os.getenv('OPENAI_API_KEY')
-    if not api_key:
-        print("❌ OPENAI_API_KEY manquante!")
+    # Check API key using centralized validation
+    is_valid, message = validate_openai_config()
+    print(message)
+    if not is_valid:
         exit(1)
-    else:
-        print(f"✅ Clé API trouvée: {api_key[:20]}...")
     
     # Run tests
     print("\n" + "="*50)

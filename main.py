@@ -6,6 +6,8 @@ from src.database import get_db, create_tables, Citizens, LinkedUsers
 from src.services import AuthService, DataService, LoggingService, INTENT_HANDLERS
 from src.model import generate_answer, get_intent
 from src.kodibot import Kodibot
+from src.prompts import build_contextualized_prompt
+from src.logger import logger, log_info, log_error, log_chat
 import json
 
 app = FastAPI(title="KodiBOT API", description="Assistant WhatsApp pour services gouvernementaux RDC")
@@ -121,28 +123,17 @@ Reformulez votre question ou choisissez une option ci-dessus.
             if not context_data and intent != "procedures":
                 response_message = "Désolé, je n'ai pas pu récupérer ces informations pour le moment."
             else:
-                # Step 8: Assemble LLM Prompt
-                system_prompt = f"""
-Tu es KodiBOT, l'assistant WhatsApp officiel pour les services gouvernementaux de la République Démocratique du Congo.
-
-UTILISATEUR: {citizen.first_name} {citizen.last_name} (ID: {citizen.citizen_id})
-
-CONTEXTE DATA:
-{json.dumps(context_data, indent=2, ensure_ascii=False) if context_data else "Aucune donnée spécifique"}
-
-INSTRUCTIONS:
-- Réponds en français de manière claire et professionnelle
-- Utilise les données du contexte pour personnaliser ta réponse
-- Si les données sont vides, indique que les informations ne sont pas disponibles
-- Sois concis mais informatif
-- Utilise des émojis appropriés pour rendre la réponse plus lisible
-- Pour les montants, utilise le format "XXX FC" (Francs Congolais)
-"""
+                # Step 8: Assemble LLM Prompt using centralized prompt system
+                system_prompt = build_contextualized_prompt(
+                    citizen_name=f"{citizen.first_name} {citizen.last_name}",
+                    citizen_id=citizen.citizen_id,
+                    context_data=json.dumps(context_data, indent=2, ensure_ascii=False) if context_data else None
+                )
                 
                 user_prompt = f"Requête utilisateur: {message_text}"
                 
                 # Step 9: Generate LLM Response
-                response_message = generate_answer(f"{system_prompt}\n\n{user_prompt}")
+                response_message = generate_answer(user_prompt, system_prompt)
         
         # Step 10: Return & Log Outbound
         LoggingService.log_message(

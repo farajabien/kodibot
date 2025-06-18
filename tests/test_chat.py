@@ -6,12 +6,11 @@ Run this after starting the server with: uvicorn main:app --reload
 
 import requests
 import json
-
-BASE_URL = "http://localhost:8000"
+from config import TestConfig
 
 def test_chat(phone_number, message):
     """Test the chat endpoint with a message"""
-    url = f"{BASE_URL}/chat"
+    url = TestConfig.get_api_url("/chat")
     payload = {"phone_number": phone_number, "message": message}
     
     try:
@@ -23,7 +22,7 @@ def test_chat(phone_number, message):
 
 def test_linking(phone_number, citizen_id):
     """Test account linking"""
-    url = f"{BASE_URL}/link-account"
+    url = TestConfig.get_api_url("/link-account")
     payload = {"phone_number": phone_number, "citizen_id": citizen_id}
     
     try:
@@ -35,7 +34,7 @@ def test_linking(phone_number, citizen_id):
 
 def test_otp(phone_number, otp_code):
     """Test OTP verification"""
-    url = f"{BASE_URL}/verify-otp"
+    url = TestConfig.get_api_url("/verify-otp")
     payload = {"phone_number": phone_number, "otp_code": otp_code}
     
     try:
@@ -50,10 +49,10 @@ def main():
     print("🤖 Testing KodiBOT API - Complete Flow")
     print("=" * 60)
     
-    # Test data
-    test_phone = "+243987654321"  # Unlinked number
-    linked_phone = "+243123456789"  # Pre-linked in seed data
-    citizen_id = "CIT123456789"
+    # Test data from centralized config
+    test_phone = TestConfig.TEST_PHONE_UNLINKED
+    linked_phone = TestConfig.TEST_PHONE_LINKED
+    citizen_id = TestConfig.TEST_CITIZEN_ID
     
     print("\n=== TEST 1: Unlinked User (should prompt for linking) ===")
     result = test_chat(test_phone, "Bonjour")
@@ -97,7 +96,7 @@ def main():
     
     print("\n=== TEST 4: Analytics ===")
     try:
-        analytics_response = requests.get(f"{BASE_URL}/analytics/popular-intents")
+        analytics_response = requests.get(TestConfig.get_api_url("/analytics/popular-intents"))
         if analytics_response.status_code == 200:
             analytics = analytics_response.json()
             print("📊 Popular Intents:")
