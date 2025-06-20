@@ -126,8 +126,8 @@ Reformulez votre question ou choisissez une option ci-dessus.
                 # Step 8: Assemble LLM Prompt using centralized prompt system
                 system_prompt = build_contextualized_prompt(
                     citizen_name=f"{citizen.first_name} {citizen.last_name}",
-                    citizen_id=citizen.citizen_id,
-                    context_data=json.dumps(context_data, indent=2, ensure_ascii=False) if context_data else None
+                    citizen_id=str(citizen.citizen_id),
+                    context_data=context_data or {}
                 )
                 
                 user_prompt = f"Requête utilisateur: {message_text}"
@@ -138,9 +138,9 @@ Reformulez votre question ou choisissez une option ci-dessus.
         # Step 10: Return & Log Outbound
         LoggingService.log_message(
             phone_number=phone_number,
-            message_text=response_message,
+            message_text=response_message or "Erreur: Réponse vide",
             direction="OUT",
-            citizen_id=citizen.citizen_id if citizen else None,
+            citizen_id=str(citizen.citizen_id) if citizen else "",
             db=db
         )
         
@@ -316,8 +316,9 @@ async def get_test_users(db: Session = Depends(get_db)):
             
             # Extract city from address
             city = "RDC"
-            if citizen.address and ',' in citizen.address:
-                parts = citizen.address.split(',')
+            address_str = getattr(citizen, 'address', None)
+            if address_str and isinstance(address_str, str) and ',' in address_str:
+                parts = address_str.split(',')
                 if len(parts) >= 2:
                     city = parts[-2].strip()
             
