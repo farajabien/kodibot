@@ -221,6 +221,18 @@ curl -X POST http://localhost:8000/chat \
   }'
 ```
 
+### 📋 **Postman Collection**
+**Import our complete test collection:**
+[🚀 KodiBOT API Collection](https://orange-crater-440016.postman.co/workspace/My-Workspace~21e55a88-5c4a-452b-8f18-f41ef6621c15/collection/16472660-6ea73118-b3f0-4d7a-96f2-472e1582798a?action=share&creator=16472660)
+
+**Features included:**
+- ✅ All API endpoints with real test data
+- ✅ Pre-configured environment variables
+- ✅ Complete chat flow testing
+- ✅ Account linking scenarios
+- ✅ Error handling tests
+- ✅ Ready-to-use request templates
+
 ### 💬 Chat Test Queries for Dev Team
 
 Use these test queries with any **pre-linked user** from the test users table:
