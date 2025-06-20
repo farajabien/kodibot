@@ -15,7 +15,11 @@ app = FastAPI(title="KodiBOT API", description="Assistant WhatsApp pour services
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],  # Frontend URLs
+    allow_origins=[
+        "http://localhost:3000", 
+        "http://127.0.0.1:3000",
+        "https://kodibot-whatsapp-api.onrender.com"
+    ],  # Frontend URLs + WhatsApp API
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
