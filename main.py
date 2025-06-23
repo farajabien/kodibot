@@ -322,6 +322,16 @@ async def get_kcaf_record_endpoint(parcel_number: str, db: Session = Depends(get
         raise HTTPException(status_code=404, detail="K-CAF record not found for this parcel")
     return db_record
 
+@app.get('/etax-status/{citizen_id}')
+async def get_etax_status_endpoint(citizen_id: str, db: Session = Depends(get_db)):
+    """
+    Get E-Tax status and account information for a citizen.
+    """
+    etax_data = DataService.get_etax_status(citizen_id=citizen_id, db=db)
+    if etax_data is None:
+        raise HTTPException(status_code=404, detail="E-Tax record not found for this citizen")
+    return etax_data
+
 @app.get('/analytics/popular-intents')
 async def get_popular_intents(db: Session = Depends(get_db)):
     """

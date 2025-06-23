@@ -218,6 +218,37 @@ class DataService:
         """Fetch K-CAF record by parcel number."""
         return db.query(KCAF_Records).filter(KCAF_Records.parcel_number == parcel_number).first()
 
+    @staticmethod
+    def get_etax_status(citizen_id: str, db: Session):
+        """Fetch E-Tax status and account information"""
+        from .test_data import get_etax_record_by_citizen_id
+        
+        etax_record = get_etax_record_by_citizen_id(citizen_id)
+        if not etax_record:
+            return None
+        
+        # Format the response for better readability
+        status_emoji = "✅" if etax_record["etax_status"] == "active" else "⚠️"
+        verification_emoji = "✅" if etax_record["verification_level"] == "verified" else "⏳"
+        
+        return {
+            "status": etax_record["etax_status"],
+            "status_display": f"{status_emoji} {etax_record['etax_status'].title()}",
+            "account_type": etax_record["account_type"],
+            "verification_level": f"{verification_emoji} {etax_record['verification_level'].title()}",
+            "registration_date": etax_record["registration_date"].strftime("%d/%m/%Y"),
+            "last_login": etax_record["last_login"].strftime("%d/%m/%Y"),
+            "payment_methods": etax_record["payment_methods"],
+            "notifications_enabled": etax_record["notifications_enabled"],
+            "auto_payment_setup": etax_record["auto_payment_setup"],
+            "tax_returns_filed": etax_record["tax_returns_filed"],
+            "last_filing_date": etax_record["last_filing_date"].strftime("%d/%m/%Y"),
+            "compliance_score": etax_record["compliance_score"],
+            "compliance_level": "Excellent" if etax_record["compliance_score"] >= 90 else 
+                               "Bon" if etax_record["compliance_score"] >= 80 else
+                               "Moyen" if etax_record["compliance_score"] >= 70 else "À améliorer"
+        }
+
 class LoggingService:
     @staticmethod
     def log_message(phone_number: str, message_text: str, direction: str, db: Session,
@@ -266,10 +297,16 @@ class IntentHandlers:
         procedure_name = slots.get("procedure_name") if slots else None
         return DataService.get_procedures_data(procedure_name, db)  # type: ignore
 
+    @staticmethod
+    def handle_get_etax_status(citizen_id: str, db: Session, slots: Optional[dict] = None):
+        """Handle E-Tax status information requests"""
+        return DataService.get_etax_status(citizen_id, db)
+
 # Intent mapping
 INTENT_HANDLERS = {
     "profile": IntentHandlers.handle_get_profile,
     "tax_info": IntentHandlers.handle_get_tax_info,
     "parcels": IntentHandlers.handle_get_parcels,
     "procedures": IntentHandlers.handle_get_procedures,
+    "etax_status": IntentHandlers.handle_get_etax_status,
 } 

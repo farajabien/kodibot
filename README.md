@@ -54,6 +54,7 @@ docker-compose up --build
 
 ### 🏛️ **Government Services**
 - **📊 Tax Information**: Balance, payment history, due dates
+- **💳 E-Tax Status**: Digital portal access, compliance scores, account verification
 - **🏠 Property Data**: Parcels, cadastral information, valuations
 - **📋 K-CAF Records**: Property assessment and compliance data
 - **👤 Profile Management**: Personal information, addresses
@@ -70,15 +71,57 @@ docker-compose up --build
 
 The database comes with real team members for testing:
 
-| Name | Phone | Role | Properties | Tax Status | E-Tax Status |
-|------|--------|------|------------|------------|--------------|
-| **Patrick Daudi** | `+243842616809` | 👑 **Founder** | 3 properties | All paid (2.5M FC) | ✅ Active |
-| **Bienvenu Faraja** | `+254793643308` | Developer | 1 apartment | Partial payment | ⚠️ Pending |
-| **Ombeni Faraja** | `+254729054607` | Developer | 1 house | Paid | ✅ Active |
-| **Prince Makeo** | `+243971127650` | Developer | 1 villa | Partial payment | ⚠️ Pending |
-| **Nickson Maliva** | `+243993710507` | Developer | 1 duplex | Paid | ✅ Active |
-| **Heri Mujyambere** | `+243070624910` | Developer | 1 family home | Partial payment | ⚠️ Pending |
-| **Jean-Pierre Mukendi** | `+25411820424` | Developer | 1 studio | Paid | ✅ Active |
+| Name | Phone | Citizen ID | Role | Properties | Tax Status | E-Tax Status |
+|------|--------|------------|------|------------|------------|--------------|
+| **Patrick Daudi** | `+243842616809` | `CIT842616809` | 👑 **Founder** | 3 properties | All paid (2.5M FC) | ✅ Active |
+| **Bienvenu Faraja** | `+254793643308` | `CIT793643308` | Developer | 1 apartment | Partial payment | ⚠️ Pending |
+| **Ombeni Faraja** | `+254729054607` | `CIT729054607` | Developer | 1 house | Paid | ✅ Active |
+| **Prince Makeo** | `+243971127650` | `CIT971127650` | Developer | 1 villa | Partial payment | ⚠️ Pending |
+| **Nickson Maliva** | `+243993710507` | `CIT993710507` | Developer | 1 duplex | Paid | ✅ Active |
+| **Heri Mujyambere** | `+243070624910` | `CIT070624910` | Developer | 1 family home | Partial payment | ⚠️ Pending |
+| **Jean-Pierre Mukendi** | `+25411820424` | `CIT011820424` | Developer | 1 studio | Paid | ✅ Active |
+
+### 🧪 **Testing E-Tax Status**
+
+Test the E-Tax endpoint with any of these citizen IDs:
+
+```bash
+# Test Patrick Daudi's E-Tax status (Premium account)
+curl http://localhost:8000/etax-status/CIT842616809
+
+# Test Bienvenu Faraja's E-Tax status (Pending verification)
+curl http://localhost:8000/etax-status/CIT793643308
+
+# Test Ombeni Faraja's E-Tax status (Standard account)
+curl http://localhost:8000/etax-status/CIT729054607
+```
+
+### 💬 **Testing E-Tax via Chat**
+
+You can also test E-Tax status through the chat interface:
+
+```bash
+# Test with Patrick Daudi (Premium account)
+curl -X POST http://localhost:8000/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "phone_number": "+243842616809",
+    "message": "Quel est mon statut E-Tax?"
+  }'
+
+# Test with Bienvenu Faraja (Pending verification)
+curl -X POST http://localhost:8000/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "phone_number": "+254793643308", 
+    "message": "Mon statut E-Tax"
+  }'
+```
+
+**Expected Chat Responses:**
+- **Patrick Daudi**: Premium account with excellent compliance (95/100)
+- **Bienvenu Faraja**: Pending verification with good compliance (75/100)
+- **Others**: Various statuses from active to pending
 
 ---
 
@@ -140,6 +183,45 @@ POST /kcaf-records
 
 GET /kcaf-records/{parcel_number}
 ```
+
+### 💳 **E-Tax Status**
+```http
+GET /etax-status/{citizen_id}
+```
+
+**Example Response:**
+```json
+{
+  "status": "active",
+  "status_display": "✅ Active",
+  "account_type": "premium",
+  "verification_level": "✅ Verified",
+  "registration_date": "15/01/2023",
+  "last_login": "20/06/2024",
+  "payment_methods": ["mobile_money", "bank_transfer", "card"],
+  "notifications_enabled": true,
+  "auto_payment_setup": true,
+  "tax_returns_filed": 3,
+  "last_filing_date": "31/03/2024",
+  "compliance_score": 95,
+  "compliance_level": "Excellent"
+}
+```
+
+**E-Tax Status Types:**
+- **✅ Active**: Account fully functional with verified status
+- **⚠️ Pending**: Account created but verification in progress
+- **❌ Suspended**: Account temporarily suspended (not in test data)
+
+**Account Types:**
+- **Premium**: Full access with multiple payment methods
+- **Standard**: Basic access with limited payment options
+
+**Compliance Levels:**
+- **Excellent** (90-100): Outstanding compliance record
+- **Bon** (80-89): Good compliance with minor issues
+- **Moyen** (70-79): Average compliance, needs attention
+- **À améliorer** (<70): Below average, requires action
 
 ### 📊 **Data Endpoints**
 ```http

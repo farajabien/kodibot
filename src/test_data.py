@@ -672,4 +672,122 @@ def get_kcaf_records_by_parcel(parcel_number: str) -> Optional[Dict[str, Any]]:
     for record in ALL_KCAF_RECORDS:
         if record["parcel_number"] == parcel_number:
             return record
-    return None 
+    return None
+
+def get_etax_record_by_citizen_id(citizen_id: str) -> Optional[Dict[str, Any]]:
+    """Get E-Tax record by citizen ID"""
+    for record in ALL_ETAX_RECORDS:
+        if record["citizen_id"] == citizen_id:
+            return record
+    return None
+
+# 💳 E-TAX STATUS DATA - Digital Tax Portal Access
+PATRICK_ETAX = {
+    "citizen_id": "CIT842616809",
+    "etax_status": "active",
+    "registration_date": datetime(2023, 1, 15),
+    "last_login": datetime(2024, 6, 20),
+    "account_type": "premium",
+    "verification_level": "verified",
+    "payment_methods": ["mobile_money", "bank_transfer", "card"],
+    "notifications_enabled": True,
+    "auto_payment_setup": True,
+    "tax_returns_filed": 3,
+    "last_filing_date": datetime(2024, 3, 31),
+    "compliance_score": 95
+}
+
+BIENVENU_ETAX = {
+    "citizen_id": "CIT793643308",
+    "etax_status": "pending",
+    "registration_date": datetime(2024, 2, 10),
+    "last_login": datetime(2024, 6, 15),
+    "account_type": "standard",
+    "verification_level": "pending",
+    "payment_methods": ["mobile_money"],
+    "notifications_enabled": True,
+    "auto_payment_setup": False,
+    "tax_returns_filed": 1,
+    "last_filing_date": datetime(2024, 3, 31),
+    "compliance_score": 75
+}
+
+OMBENI_ETAX = {
+    "citizen_id": "CIT729054607",
+    "etax_status": "active",
+    "registration_date": datetime(2023, 8, 22),
+    "last_login": datetime(2024, 6, 18),
+    "account_type": "standard",
+    "verification_level": "verified",
+    "payment_methods": ["mobile_money", "bank_transfer"],
+    "notifications_enabled": True,
+    "auto_payment_setup": True,
+    "tax_returns_filed": 2,
+    "last_filing_date": datetime(2024, 3, 31),
+    "compliance_score": 88
+}
+
+PRINCE_ETAX = {
+    "citizen_id": "CIT971127650",
+    "etax_status": "pending",
+    "registration_date": datetime(2024, 1, 5),
+    "last_login": datetime(2024, 6, 10),
+    "account_type": "standard",
+    "verification_level": "pending",
+    "payment_methods": ["mobile_money"],
+    "notifications_enabled": False,
+    "auto_payment_setup": False,
+    "tax_returns_filed": 1,
+    "last_filing_date": datetime(2024, 3, 31),
+    "compliance_score": 65
+}
+
+NICKSON_ETAX = {
+    "citizen_id": "CIT993710507",
+    "etax_status": "active",
+    "registration_date": datetime(2023, 11, 12),
+    "last_login": datetime(2024, 6, 22),
+    "account_type": "premium",
+    "verification_level": "verified",
+    "payment_methods": ["mobile_money", "bank_transfer", "card"],
+    "notifications_enabled": True,
+    "auto_payment_setup": True,
+    "tax_returns_filed": 2,
+    "last_filing_date": datetime(2024, 3, 31),
+    "compliance_score": 92
+}
+
+HERI_ETAX = {
+    "citizen_id": "CIT070624910",
+    "etax_status": "pending",
+    "registration_date": datetime(2024, 3, 18),
+    "last_login": datetime(2024, 6, 12),
+    "account_type": "standard",
+    "verification_level": "pending",
+    "payment_methods": ["mobile_money"],
+    "notifications_enabled": True,
+    "auto_payment_setup": False,
+    "tax_returns_filed": 1,
+    "last_filing_date": datetime(2024, 3, 31),
+    "compliance_score": 70
+}
+
+JP_ETAX = {
+    "citizen_id": "CIT011820424",
+    "etax_status": "active",
+    "registration_date": datetime(2023, 6, 30),
+    "last_login": datetime(2024, 6, 19),
+    "account_type": "standard",
+    "verification_level": "verified",
+    "payment_methods": ["mobile_money", "bank_transfer"],
+    "notifications_enabled": True,
+    "auto_payment_setup": True,
+    "tax_returns_filed": 2,
+    "last_filing_date": datetime(2024, 3, 31),
+    "compliance_score": 85
+}
+
+ALL_ETAX_RECORDS = [
+    PATRICK_ETAX, BIENVENU_ETAX, OMBENI_ETAX, PRINCE_ETAX,
+    NICKSON_ETAX, HERI_ETAX, JP_ETAX
+] 
