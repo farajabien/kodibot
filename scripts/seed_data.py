@@ -8,13 +8,14 @@ import sys
 import os
 import json
 from datetime import datetime
+from sqlalchemy.orm import Session
 
 # Add parent directory to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.database import create_tables, Citizens, Taxes, Parcels, Procedures, LinkedUsers, SessionLocal
+from src.database import create_tables, Citizens, Taxes, Parcels, Procedures, LinkedUsers, SessionLocal, KCAF_Records
 from src.test_data import (
-    ALL_CITIZENS, ALL_TAXES, ALL_PARCELS, TEST_PROCEDURES,
+    ALL_CITIZENS, ALL_TAXES, ALL_PARCELS, TEST_PROCEDURES, ALL_KCAF_RECORDS,
     PATRICK_DAUDI, get_patrick_phone, get_patrick_citizen_id
 )
 
@@ -27,6 +28,7 @@ def clear_database():
         db.query(Taxes).delete()
         db.query(Parcels).delete()
         db.query(Procedures).delete()
+        db.query(KCAF_Records).delete()
         db.query(Citizens).delete()
         db.commit()
         print("✅ Database cleared")
@@ -184,10 +186,12 @@ def print_summary():
         parcel_count = db.query(Parcels).count()
         procedure_count = db.query(Procedures).count()
         linked_count = db.query(LinkedUsers).count()
+        kcaf_count = db.query(KCAF_Records).count()
         
         print(f"👥 Citizens: {citizen_count}")
         print(f"💰 Tax Records: {tax_count}")
         print(f"🏠 Parcels: {parcel_count}")
+        print(f"🏢 K-CAF Records: {kcaf_count}")
         print(f"📋 Procedures: {procedure_count}")
         print(f"🔗 Linked Users: {linked_count}")
         
@@ -210,6 +214,71 @@ def print_summary():
     finally:
         db.close()
 
+def seed_kcaf_records():
+    """Seed all K-CAF records"""
+    db = SessionLocal()
+    try:
+        print("🏢 Seeding K-CAF records...")
+        
+        for kcaf_data in ALL_KCAF_RECORDS:
+            # Convert appartements_details to JSON string
+            appartements_json = json.dumps(kcaf_data["appartements_details"], ensure_ascii=False) if kcaf_data["appartements_details"] else None
+            
+            kcaf_record = KCAF_Records(
+                parcel_number=kcaf_data["parcel_number"],
+                nature_propriete=kcaf_data["nature_propriete"],
+                usage_principal=kcaf_data["usage_principal"],
+                nom_proprietaire=kcaf_data["nom_proprietaire"],
+                nationalite_proprietaire=kcaf_data["nationalite_proprietaire"],
+                type_possession=kcaf_data["type_possession"],
+                telephone_proprietaire=kcaf_data["telephone_proprietaire"],
+                etat_civil_proprietaire=kcaf_data["etat_civil_proprietaire"],
+                sexe_proprietaire=kcaf_data["sexe_proprietaire"],
+                adresse_commune=kcaf_data["adresse_commune"],
+                adresse_quartier=kcaf_data["adresse_quartier"],
+                adresse_avenue=kcaf_data["adresse_avenue"],
+                adresse_numero=kcaf_data["adresse_numero"],
+                type_personne=kcaf_data["type_personne"],
+                type_batiment=kcaf_data["type_batiment"],
+                nombre_etages=kcaf_data["nombre_etages"],
+                nombre_appartements=kcaf_data["nombre_appartements"],
+                nombre_appartements_vides=kcaf_data["nombre_appartements_vides"],
+                appartements_details=appartements_json,
+                plaque_identification=kcaf_data["plaque_identification"],
+                raccordements=json.dumps(kcaf_data["raccordements"], ensure_ascii=False),
+                distance_sante=kcaf_data["distance_sante"],
+                distance_education=kcaf_data["distance_education"],
+                acces_eau_potable=json.dumps(kcaf_data["acces_eau_potable"], ensure_ascii=False),
+                gestion_dechets=json.dumps(kcaf_data["gestion_dechets"], ensure_ascii=False),
+                photo_url=kcaf_data["photo_url"],
+                montant_a_payer=kcaf_data["montant_a_payer"],
+                etat=kcaf_data["etat"],
+                numero_collecteur=kcaf_data["numero_collecteur"]
+            )
+            db.add(kcaf_record)
+            print(f"  ✅ Added K-CAF: {kcaf_data['parcel_number']} - {kcaf_data['nom_proprietaire']}")
+        
+        db.commit()
+        print(f"✅ Seeded {len(ALL_KCAF_RECORDS)} K-CAF records")
+        
+    except Exception as e:
+        print(f"❌ Error seeding K-CAF records: {e}")
+        db.rollback()
+    finally:
+        db.close()
+
+def seed_all():
+    """Seed all data into the database"""
+    db = SessionLocal()
+    print("Seeding database...")
+    seed_citizens()
+    seed_taxes()
+    seed_parcels()
+    seed_kcaf_records()
+    seed_procedures()
+    create_linked_users()
+    print("🎉 Database seeding complete!")
+
 def main():
     """Main seeding function"""
     print("🌱 KodiBOT Database Seeding - Real User Data")
@@ -224,11 +293,7 @@ def main():
     clear_database()
     
     # Seed data in order (citizens first, then related records)
-    seed_citizens()
-    seed_taxes()
-    seed_parcels()
-    seed_procedures()
-    create_linked_users()
+    seed_all()
     
     # Print summary
     print_summary()

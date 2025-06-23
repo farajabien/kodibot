@@ -6,9 +6,11 @@ import random
 import string
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
-from .database import Citizens, LinkedUsers, Taxes, Parcels, Procedures, ChatLogs
+from .database import Citizens, LinkedUsers, Taxes, Parcels, Procedures, ChatLogs, KCAF_Records
+from .models import KCAF_RecordCreate
 import json
 import uuid
+from typing import Optional
 
 class AuthService:
     @staticmethod
@@ -60,10 +62,10 @@ class AuthService:
         ).first()
         
         if existing_link:
-            existing_link.citizen_id = citizen_id
-            existing_link.otp_code = otp
-            existing_link.otp_expires_at = otp_expires
-            existing_link.is_linked = False
+            existing_link.citizen_id = citizen_id  # type: ignore
+            existing_link.otp_code = otp  # type: ignore
+            existing_link.otp_expires_at = otp_expires  # type: ignore
+            existing_link.is_linked = False  # type: ignore
         else:
             new_link = LinkedUsers(
                 phone_number=phone_number,
@@ -92,17 +94,17 @@ class AuthService:
         if not linked_user:
             return {"success": False, "message": "Aucune demande de liaison trouvée"}
         
-        if linked_user.otp_expires_at < datetime.utcnow():
+        if linked_user.otp_expires_at < datetime.utcnow():  # type: ignore
             return {"success": False, "message": "Code OTP expiré"}
         
-        if linked_user.otp_code != otp_code:
+        if linked_user.otp_code != otp_code:  # type: ignore
             return {"success": False, "message": "Code OTP incorrect"}
         
         # Complete linking
-        linked_user.is_linked = True
-        linked_user.linked_at = datetime.utcnow()
-        linked_user.otp_code = None
-        linked_user.otp_expires_at = None
+        linked_user.is_linked = True  # type: ignore
+        linked_user.linked_at = datetime.utcnow()  # type: ignore
+        linked_user.otp_code = None  # type: ignore
+        linked_user.otp_expires_at = None  # type: ignore
         
         db.commit()
         
@@ -118,7 +120,7 @@ class DataService:
         
         return {
             "nom": f"{citizen.first_name} {citizen.last_name}",
-            "date_naissance": citizen.date_of_birth.strftime("%d/%m/%Y") if citizen.date_of_birth else "Non définie",
+            "date_naissance": citizen.date_of_birth.strftime("%d/%m/%Y") if citizen.date_of_birth else "Non définie",  # type: ignore
             "adresse": citizen.address or "Non définie",
             "email": citizen.email or "Non définie"
         }
@@ -139,7 +141,7 @@ class DataService:
                 "montant_paye": tax.amount_paid,
                 "statut": tax.status,
                 "annee": tax.tax_year,
-                "echeance": tax.due_date.strftime("%d/%m/%Y") if tax.due_date else "Non définie"
+                "echeance": tax.due_date.strftime("%d/%m/%Y") if tax.due_date else "Non définie"  # type: ignore
             })
             total_due += tax.amount_due
             total_paid += tax.amount_paid
@@ -162,7 +164,7 @@ class DataService:
                 "numero_parcelle": parcel.parcel_number,
                 "type": parcel.property_type,
                 "adresse": parcel.address,
-                "superficie": f"{parcel.area_sqm} m²" if parcel.area_sqm else "Non définie",
+                "superficie": f"{parcel.area_sqm} m²" if parcel.area_sqm else "Non définie",  # type: ignore
                 "valeur_estimee": parcel.estimated_value,
                 "statut": parcel.status
             })
@@ -187,18 +189,40 @@ class DataService:
         return {
             "nom": procedure.name,
             "description": procedure.description,
-            "etapes": json.loads(procedure.steps) if procedure.steps else [],
-            "documents_requis": json.loads(procedure.required_documents) if procedure.required_documents else [],
+            "etapes": json.loads(procedure.steps) if procedure.steps else [],  # type: ignore
+            "documents_requis": json.loads(procedure.required_documents) if procedure.required_documents else [],  # type: ignore
             "duree_estimee": procedure.estimated_duration,
             "cout": procedure.cost,
             "departement": procedure.department
         }
 
+    @staticmethod
+    def create_kcaf_record(record_data: KCAF_RecordCreate, db: Session):
+        """Create a new K-CAF record for a parcel."""
+        existing_record = db.query(KCAF_Records).filter(KCAF_Records.parcel_number == record_data.parcel_number).first()
+        if existing_record:
+            return None
+
+        record_dict = record_data.dict()
+        if record_data.appartements_details:
+            record_dict['appartements_details'] = [apt.dict() for apt in record_data.appartements_details]
+
+        new_record = KCAF_Records(**record_dict)
+        db.add(new_record)
+        db.commit()
+        db.refresh(new_record)
+        return new_record
+
+    @staticmethod
+    def get_kcaf_record_by_parcel(parcel_number: str, db: Session):
+        """Fetch K-CAF record by parcel number."""
+        return db.query(KCAF_Records).filter(KCAF_Records.parcel_number == parcel_number).first()
+
 class LoggingService:
     @staticmethod
-    def log_message(phone_number: str, message_text: str, direction: str, 
-                   intent: str = None, confidence: float = None, 
-                   citizen_id: str = None, db: Session = None):
+    def log_message(phone_number: str, message_text: str, direction: str, db: Session,
+                   intent: Optional[str] = None, confidence: Optional[float] = None, 
+                   citizen_id: Optional[str] = None):
         """Log chat message"""
         chat_log = ChatLogs(
             phone_number=phone_number,
@@ -208,7 +232,7 @@ class LoggingService:
             intent=intent,
             confidence=confidence
         )
-        db.add(chat_log)
+        db.add(chat_log)  # type: ignore
         db.commit()
         return chat_log
     
@@ -217,30 +241,30 @@ class LoggingService:
         """Update response accuracy score"""
         chat_log = db.query(ChatLogs).filter(ChatLogs.id == log_id).first()
         if chat_log:
-            chat_log.response_accuracy = accuracy
+            chat_log.response_accuracy = accuracy  # type: ignore
             db.commit()
 
 class IntentHandlers:
     @staticmethod
-    def handle_get_profile(citizen_id: str, db: Session, slots: dict = None):
+    def handle_get_profile(citizen_id: str, db: Session, slots: Optional[dict] = None):
         """Handle profile information requests"""
         return DataService.get_profile_data(citizen_id, db)
     
     @staticmethod
-    def handle_get_tax_info(citizen_id: str, db: Session, slots: dict = None):
+    def handle_get_tax_info(citizen_id: str, db: Session, slots: Optional[dict] = None):
         """Handle tax information requests"""
         return DataService.get_tax_data(citizen_id, db)
     
     @staticmethod
-    def handle_get_parcels(citizen_id: str, db: Session, slots: dict = None):
+    def handle_get_parcels(citizen_id: str, db: Session, slots: Optional[dict] = None):
         """Handle parcel information requests"""
         return DataService.get_parcels_data(citizen_id, db)
     
     @staticmethod
-    def handle_get_procedures(citizen_id: str, db: Session, slots: dict = None):
+    def handle_get_procedures(citizen_id: str, db: Session, slots: Optional[dict] = None):
         """Handle procedure information requests"""
         procedure_name = slots.get("procedure_name") if slots else None
-        return DataService.get_procedures_data(procedure_name, db)
+        return DataService.get_procedures_data(procedure_name, db)  # type: ignore
 
 # Intent mapping
 INTENT_HANDLERS = {

@@ -5,8 +5,8 @@ Eliminates hardcoded URLs and provides consistent test settings
 
 import os
 from src.test_data import (
-    get_primary_phone, get_secondary_phone, get_primary_citizen_id, 
-    get_test_otp, TEST_MESSAGES, EXPECTED_RESPONSES
+    get_patrick_phone, get_patrick_citizen_id, TEST_MESSAGES,
+    PATRICK_DAUDI, BIENVENU_FARAJA, TEST_AUTH
 )
 
 # Base URLs for testing
@@ -20,11 +20,11 @@ class TestConfig:
     API_BASE = os.getenv("TEST_API_BASE", DEFAULT_API_BASE)
     FRONTEND_BASE = os.getenv("TEST_FRONTEND_BASE", DEFAULT_FRONTEND_BASE)
     
-    # Test Data (imported from centralized test_data module)
-    TEST_PHONE_LINKED = get_primary_phone()         # Pre-linked user (Jean Kabila)
-    TEST_PHONE_UNLINKED = get_secondary_phone()     # Unlinked user (Marie Tshisekedi)
-    TEST_CITIZEN_ID = get_primary_citizen_id()       # Valid citizen ID
-    TEST_OTP_CODE = get_test_otp()                   # Standard test OTP
+    # Test Data (using our real user data)
+    TEST_PHONE_LINKED = get_patrick_phone()         # Pre-linked user (Patrick Daudi)
+    TEST_PHONE_UNLINKED = BIENVENU_FARAJA["phone_number"]  # Unlinked user (Bienvenu Faraja)
+    TEST_CITIZEN_ID = get_patrick_citizen_id()       # Valid citizen ID
+    TEST_OTP_CODE = TEST_AUTH["otp_code"]            # Standard test OTP
     
     # Test Timeouts
     API_TIMEOUT = 30  # seconds
@@ -33,8 +33,15 @@ class TestConfig:
     # Test Messages (imported from centralized module)
     TEST_MESSAGES = TEST_MESSAGES
     
-    # Expected Responses (imported from centralized module)
-    EXPECTED_RESPONSES = EXPECTED_RESPONSES
+    # Expected Responses (simplified for our current setup)
+    EXPECTED_RESPONSES = {
+        "greeting": "Bonjour",
+        "tax_info": "solde fiscal",
+        "parcels": "parcelles",
+        "procedures": "permis de conduire",
+        "profile": "informations personnelles",
+        "goodbye": "Au revoir"
+    }
     
     @classmethod
     def get_api_url(cls, endpoint: str) -> str:

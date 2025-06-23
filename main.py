@@ -1,7 +1,11 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-from src.models import ChatRequest, ChatResponse, LinkingRequest, OTPVerificationRequest, LinkingResponse
+from src.models import (
+    ChatRequest, ChatResponse, 
+    LinkingRequest, OTPVerificationRequest, LinkingResponse,
+    KCAF_RecordCreate, KCAF_RecordResponse
+)
 from src.database import get_db, create_tables, Citizens, LinkedUsers
 from src.services import AuthService, DataService, LoggingService, INTENT_HANDLERS
 from src.model import generate_answer, get_intent
@@ -9,6 +13,7 @@ from src.kodibot import Kodibot
 from src.prompts import build_contextualized_prompt
 from src.logger import logger, log_info, log_error, log_chat
 import json
+from typing import Optional
 
 app = FastAPI(title="KodiBOT API", description="Assistant WhatsApp pour services gouvernementaux RDC")
 
@@ -56,8 +61,63 @@ async def chat(request: ChatRequest, db: Session = Depends(get_db)):
         is_linked = AuthService.is_user_linked(phone_number, db)
         
         if not is_linked:
-            # Step 4a: KYC Onboarding (for unlinked numbers)
-            response_message = "Bienvenue sur KodiBOT! 📋 Pour accéder à vos informations, veuillez lier votre téléphone en tapant votre numéro de citoyen (format: CIT123456789)."
+            # Step 4a: KYC Onboarding for unlinked numbers
+            # Check if the message is a citizen ID to initiate linking
+            if message_text.strip().upper().startswith("CIT") and len(message_text.strip()) > 10:
+                citizen_id = message_text.strip().upper()
+                linking_result = AuthService.initiate_linking(phone_number, citizen_id, db)
+                
+                # Log the linking attempt
+                LoggingService.log_message(
+                    phone_number=phone_number,
+                    message_text=f"Tentative de liaison avec ID: {citizen_id}",
+                    direction="IN",
+                    db=db
+                )
+                
+                response_message = linking_result["message"]
+                
+                LoggingService.log_message(
+                    phone_number=phone_number,
+                    message_text=response_message,
+                    direction="OUT",
+                    db=db
+                )
+                
+                return ChatResponse(
+                    response=response_message,
+                    requires_linking=True
+                )
+
+            # Check if the message is an OTP for verification
+            if message_text.strip().isdigit() and len(message_text.strip()) == 6:
+                otp_code = message_text.strip()
+                verification_result = AuthService.verify_otp(phone_number, otp_code, db)
+
+                # Log the OTP verification attempt
+                LoggingService.log_message(
+                    phone_number=phone_number,
+                    message_text=f"Tentative de vérification OTP: {'succès' if verification_result['success'] else 'échec'}",
+                    direction="IN",
+                    db=db
+                )
+                
+                response_message = verification_result["message"]
+                
+                LoggingService.log_message(
+                    phone_number=phone_number,
+                    message_text=response_message,
+                    direction="OUT",
+                    db=db
+                )
+                
+                return ChatResponse(
+                    response=response_message,
+                    requires_linking=not verification_result["success"]
+                )
+
+            # If not a citizen ID or OTP, ask for linking
+            response_message = kodibot.handle_linking_required()
             
             # Log outbound response
             LoggingService.log_message(
@@ -241,6 +301,26 @@ async def verify_otp(request: OTPVerificationRequest, db: Session = Depends(get_
             success=False,
             message="Erreur lors de la vérification OTP"
         )
+
+@app.post('/kcaf-records', response_model=KCAF_RecordResponse, status_code=201)
+async def create_kcaf_record_endpoint(record: KCAF_RecordCreate, db: Session = Depends(get_db)):
+    """
+    Create a new K-CAF record for a specific parcel.
+    """
+    db_record = DataService.create_kcaf_record(record_data=record, db=db)
+    if db_record is None:
+        raise HTTPException(status_code=409, detail="K-CAF record already exists for this parcel")
+    return db_record
+
+@app.get('/kcaf-records/{parcel_number}', response_model=KCAF_RecordResponse)
+async def get_kcaf_record_endpoint(parcel_number: str, db: Session = Depends(get_db)):
+    """
+    Get a K-CAF record by its parcel number.
+    """
+    db_record = DataService.get_kcaf_record_by_parcel(parcel_number=parcel_number, db=db)
+    if db_record is None:
+        raise HTTPException(status_code=404, detail="K-CAF record not found for this parcel")
+    return db_record
 
 @app.get('/analytics/popular-intents')
 async def get_popular_intents(db: Session = Depends(get_db)):

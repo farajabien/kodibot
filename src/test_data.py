@@ -345,6 +345,262 @@ TEST_PROCEDURES = [
     }
 ]
 
+# 🏢 K-CAF TEST DATA - COMPREHENSIVE PROPERTY ASSESSMENT
+PATRICK_KCAF_RECORDS = [
+    {
+        "parcel_number": "P001-GOMBE-2024",
+        "nature_propriete": "Résidentielle",
+        "usage_principal": "Habitation principale",
+        "nom_proprietaire": "Patrick Daudi",
+        "nationalite_proprietaire": "Congolais",
+        "type_possession": "Propriétaire",
+        "telephone_proprietaire": "+243842616809",
+        "etat_civil_proprietaire": "Marié",
+        "sexe_proprietaire": "Masculin",
+        "adresse_commune": "Gombe",
+        "adresse_quartier": "Centre-ville",
+        "adresse_avenue": "Boulevard du 30 Juin",
+        "adresse_numero": "100",
+        "type_personne": "Personne physique",
+        "type_batiment": "Maison individuelle",
+        "nombre_etages": "2",
+        "nombre_appartements": 1,
+        "nombre_appartements_vides": 0,
+        "appartements_details": [
+            {
+                "occupant_actuel": "propriétaire",
+                "nom_occupant": "Patrick Daudi",
+                "telephone_occupant": "+243842616809",
+                "montant_loyer": None,
+                "devise_loyer": None,
+                "date_debut_contrat": None,
+                "date_fin_contrat": None
+            }
+        ],
+        "plaque_identification": True,
+        "raccordements": {
+            "electricite": True,
+            "eau": True,
+            "telephone": True,
+            "internet": True,
+            "gaz": False
+        },
+        "distance_sante": "500m",
+        "distance_education": "1km",
+        "acces_eau_potable": {
+            "reseau_public": True,
+            "puits": False,
+            "forage": False,
+            "eau_embouteillee": True
+        },
+        "gestion_dechets": {
+            "ramassage_public": True,
+            "incineration": False,
+            "decharge_sauvage": False,
+            "recyclage": True
+        },
+        "photo_url": "https://example.com/photos/patrick_maison.jpg",
+        "montant_a_payer": 850_000.0,
+        "etat": "En règle",
+        "numero_collecteur": "COL001"
+    },
+    {
+        "parcel_number": "P002-GOMBE-2024",
+        "nature_propriete": "Commerciale",
+        "usage_principal": "Bureau",
+        "nom_proprietaire": "Patrick Daudi",
+        "nationalite_proprietaire": "Congolais",
+        "type_possession": "Propriétaire",
+        "telephone_proprietaire": "+243842616809",
+        "etat_civil_proprietaire": "Marié",
+        "sexe_proprietaire": "Masculin",
+        "adresse_commune": "Gombe",
+        "adresse_quartier": "Centre-ville",
+        "adresse_avenue": "Avenue de la Paix",
+        "adresse_numero": "25",
+        "type_personne": "Personne physique",
+        "type_batiment": "Immeuble de bureaux",
+        "nombre_etages": "3",
+        "nombre_appartements": 6,
+        "nombre_appartements_vides": 1,
+        "appartements_details": [
+            {
+                "occupant_actuel": "locataire",
+                "nom_occupant": "KODINET SARL",
+                "telephone_occupant": "+243842616809",
+                "montant_loyer": 5000.0,
+                "devise_loyer": "USD",
+                "date_debut_contrat": "2024-01-01",
+                "date_fin_contrat": "2024-12-31"
+            },
+            {
+                "occupant_actuel": "locataire",
+                "nom_occupant": "Banque Commerciale",
+                "telephone_occupant": "+243123456789",
+                "montant_loyer": 8000.0,
+                "devise_loyer": "USD",
+                "date_debut_contrat": "2024-01-01",
+                "date_fin_contrat": "2024-12-31"
+            },
+            {
+                "occupant_actuel": "vacant",
+                "nom_occupant": None,
+                "telephone_occupant": None,
+                "montant_loyer": None,
+                "devise_loyer": None,
+                "date_debut_contrat": None,
+                "date_fin_contrat": None
+            }
+        ],
+        "plaque_identification": True,
+        "raccordements": {
+            "electricite": True,
+            "eau": True,
+            "telephone": True,
+            "internet": True,
+            "gaz": True
+        },
+        "distance_sante": "800m",
+        "distance_education": "1.5km",
+        "acces_eau_potable": {
+            "reseau_public": True,
+            "puits": False,
+            "forage": False,
+            "eau_embouteillee": True
+        },
+        "gestion_dechets": {
+            "ramassage_public": True,
+            "incineration": False,
+            "decharge_sauvage": False,
+            "recyclage": True
+        },
+        "photo_url": "https://example.com/photos/patrick_bureau.jpg",
+        "montant_a_payer": 450_000.0,
+        "etat": "En règle",
+        "numero_collecteur": "COL002"
+    }
+]
+
+BIENVENU_KCAF_RECORDS = [
+    {
+        "parcel_number": "P004-LING-2024",
+        "nature_propriete": "Résidentielle",
+        "usage_principal": "Habitation",
+        "nom_proprietaire": "Bienvenu Faraja",
+        "nationalite_proprietaire": "Congolais",
+        "type_possession": "Propriétaire",
+        "telephone_proprietaire": "+254793643308",
+        "etat_civil_proprietaire": "Célibataire",
+        "sexe_proprietaire": "Masculin",
+        "adresse_commune": "Lingwala",
+        "adresse_quartier": "Université",
+        "adresse_avenue": "Avenue de l'Université",
+        "adresse_numero": "15",
+        "type_personne": "Personne physique",
+        "type_batiment": "Appartement",
+        "nombre_etages": "1",
+        "nombre_appartements": 1,
+        "nombre_appartements_vides": 0,
+        "appartements_details": [
+            {
+                "occupant_actuel": "propriétaire",
+                "nom_occupant": "Bienvenu Faraja",
+                "telephone_occupant": "+254793643308",
+                "montant_loyer": None,
+                "devise_loyer": None,
+                "date_debut_contrat": None,
+                "date_fin_contrat": None
+            }
+        ],
+        "plaque_identification": True,
+        "raccordements": {
+            "electricite": True,
+            "eau": True,
+            "telephone": True,
+            "internet": True,
+            "gaz": False
+        },
+        "distance_sante": "1km",
+        "distance_education": "200m",
+        "acces_eau_potable": {
+            "reseau_public": True,
+            "puits": False,
+            "forage": False,
+            "eau_embouteillee": True
+        },
+        "gestion_dechets": {
+            "ramassage_public": True,
+            "incineration": False,
+            "decharge_sauvage": False,
+            "recyclage": False
+        },
+        "photo_url": "https://example.com/photos/bienvenu_appartement.jpg",
+        "montant_a_payer": 180_000.0,
+        "etat": "En retard",
+        "numero_collecteur": "COL003"
+    }
+]
+
+OMBENI_KCAF_RECORDS = [
+    {
+        "parcel_number": "P005-BARU-2024",
+        "nature_propriete": "Résidentielle",
+        "usage_principal": "Habitation familiale",
+        "nom_proprietaire": "Ombeni Faraja",
+        "nationalite_proprietaire": "Congolais",
+        "type_possession": "Propriétaire",
+        "telephone_proprietaire": "+254729054607",
+        "etat_civil_proprietaire": "Marié",
+        "sexe_proprietaire": "Masculin",
+        "adresse_commune": "Barumbu",
+        "adresse_quartier": "Kasavubu",
+        "adresse_avenue": "Avenue Kasavubu",
+        "adresse_numero": "45",
+        "type_personne": "Personne physique",
+        "type_batiment": "Maison individuelle",
+        "nombre_etages": "1",
+        "nombre_appartements": 1,
+        "nombre_appartements_vides": 0,
+        "appartements_details": [
+            {
+                "occupant_actuel": "propriétaire",
+                "nom_occupant": "Ombeni Faraja",
+                "telephone_occupant": "+254729054607",
+                "montant_loyer": None,
+                "devise_loyer": None,
+                "date_debut_contrat": None,
+                "date_fin_contrat": None
+            }
+        ],
+        "plaque_identification": True,
+        "raccordements": {
+            "electricite": True,
+            "eau": True,
+            "telephone": True,
+            "internet": False,
+            "gaz": False
+        },
+        "distance_sante": "1.2km",
+        "distance_education": "800m",
+        "acces_eau_potable": {
+            "reseau_public": True,
+            "puits": False,
+            "forage": False,
+            "eau_embouteillee": True
+        },
+        "gestion_dechets": {
+            "ramassage_public": True,
+            "incineration": False,
+            "decharge_sauvage": False,
+            "recyclage": False
+        },
+        "photo_url": "https://example.com/photos/ombeni_maison.jpg",
+        "montant_a_payer": 220_000.0,
+        "etat": "En règle",
+        "numero_collecteur": "COL004"
+    }
+]
+
 # 🏗️ ALL USERS CONSOLIDATED
 ALL_CITIZENS = [
     PATRICK_DAUDI,
@@ -364,6 +620,10 @@ ALL_PARCELS = (
 ALL_TAXES = (
     PATRICK_TAXES + BIENVENU_TAXES + OMBENI_TAXES +
     PRINCE_TAXES + NICKSON_TAXES + HERI_TAXES + JP_TAXES
+)
+
+ALL_KCAF_RECORDS = (
+    PATRICK_KCAF_RECORDS + BIENVENU_KCAF_RECORDS + OMBENI_KCAF_RECORDS
 )
 
 # 🔐 TEST AUTHENTICATION
@@ -405,4 +665,11 @@ def get_taxes_by_citizen_id(citizen_id: str) -> List[Dict[str, Any]]:
 
 def get_parcels_by_citizen_id(citizen_id: str) -> List[Dict[str, Any]]:
     """Get all parcels for a specific citizen"""
-    return [parcel for parcel in ALL_PARCELS if parcel["citizen_id"] == citizen_id] 
+    return [parcel for parcel in ALL_PARCELS if parcel["citizen_id"] == citizen_id]
+
+def get_kcaf_records_by_parcel(parcel_number: str) -> Optional[Dict[str, Any]]:
+    """Get K-CAF record by parcel number"""
+    for record in ALL_KCAF_RECORDS:
+        if record["parcel_number"] == parcel_number:
+            return record
+    return None 

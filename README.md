@@ -55,6 +55,7 @@ docker-compose up --build
 ### 🏛️ **Government Services**
 - **📊 Tax Information**: Balance, payment history, due dates
 - **🏠 Property Data**: Parcels, cadastral information, valuations
+- **📋 K-CAF Records**: Property assessment and compliance data
 - **👤 Profile Management**: Personal information, addresses
 - **📋 Procedures**: Permit renewals, document requests
 
@@ -69,15 +70,15 @@ docker-compose up --build
 
 The database comes with real team members for testing:
 
-| Name | Phone | Role | Properties | Tax Status |
-|------|--------|------|------------|------------|
-| **Patrick Daudi** | `+243842616809` | 👑 **Founder** | 3 properties | All paid (2.5M FC) |
-| **Bienvenu Faraja** | `+254793643308` | Developer | 1 apartment | Partial payment |
-| **Ombeni Faraja** | `+254729054607` | Developer | 1 house | Paid |
-| **Prince Makeo** | `+243971127650` | Developer | 1 villa | Partial payment |
-| **Nickson Maliva** | `+243993710507` | Developer | 1 duplex | Paid |
-| **Heri Mujyambere** | `+243070624910` | Developer | 1 family home | Partial payment |
-| **Jean-Pierre Mukendi** | `+25411820424` | Developer | 1 studio | Paid |
+| Name | Phone | Role | Properties | Tax Status | E-Tax Status |
+|------|--------|------|------------|------------|--------------|
+| **Patrick Daudi** | `+243842616809` | 👑 **Founder** | 3 properties | All paid (2.5M FC) | ✅ Active |
+| **Bienvenu Faraja** | `+254793643308` | Developer | 1 apartment | Partial payment | ⚠️ Pending |
+| **Ombeni Faraja** | `+254729054607` | Developer | 1 house | Paid | ✅ Active |
+| **Prince Makeo** | `+243971127650` | Developer | 1 villa | Partial payment | ⚠️ Pending |
+| **Nickson Maliva** | `+243993710507` | Developer | 1 duplex | Paid | ✅ Active |
+| **Heri Mujyambere** | `+243070624910` | Developer | 1 family home | Partial payment | ⚠️ Pending |
+| **Jean-Pierre Mukendi** | `+25411820424` | Developer | 1 studio | Paid | ✅ Active |
 
 ---
 
@@ -105,6 +106,39 @@ POST /verify-otp
   "phone_number": "+243842616809",
   "otp_code": "123456"
 }
+```
+
+### 📋 **K-CAF Records**
+```http
+POST /kcaf-records
+{
+  "parcel_number": "P001-GOMBE-2024",
+  "nature_propriete": "Bâtie",
+  "usage_principal": "Résidentiel",
+  "nom_proprietaire": "Patrick Daudi",
+  "nationalite_proprietaire": "National",
+  "type_possession": "Titre Foncier",
+  "adresse_commune": "Gombe",
+  "adresse_quartier": "Centre",
+  "adresse_avenue": "Boulevard du 30 Juin",
+  "adresse_numero": "100",
+  "type_personne": "Physique",
+  "type_batiment": "Maison principale",
+  "nombre_etages": "R+2",
+  "nombre_appartements": 1,
+  "nombre_appartements_vides": 0,
+  "plaque_identification": true,
+  "raccordements": {"eau": true, "electricite": true, "telecom": true, "assainissement": true},
+  "distance_sante": "<1KM",
+  "distance_education": "<1KM",
+  "acces_eau_potable": {"reseau": true, "puit": false},
+  "gestion_dechets": {"collecte_municipale": true},
+  "montant_a_payer": 1500.0,
+  "etat": "Complet",
+  "numero_collecteur": "COLLECTOR-001"
+}
+
+GET /kcaf-records/{parcel_number}
 ```
 
 ### 📊 **Data Endpoints**
@@ -199,168 +233,44 @@ DATABASE_URL=sqlite:///kodibot.db # Database URL
 python tests/health_check.py
 ```
 
-### Integration Tests
+### Test K-CAF Endpoints
 ```bash
-python tests/test_integration.py
+# Create K-CAF record
+curl -X POST "http://localhost:8000/kcaf-records" \
+  -H "Content-Type: application/json" \
+  -d @test_kcaf_data.json
+
+# Get K-CAF record
+curl "http://localhost:8000/kcaf-records/P001-GOMBE-2024"
 ```
 
-### Manual API Testing
-```bash
-# Health check
-curl http://localhost:8000
+---
 
-# Get test users
-curl http://localhost:8000/test-users
+## 📋 K-CAF Data Structure
 
-# Test with Patrick Daudi (founder) - Rich data profile
-curl -X POST http://localhost:8000/chat \
-  -H "Content-Type: application/json" \
-  -d '{
-    "phone_number": "+243842616809",
-    "message": "Quelles sont mes parcelles?"
-  }'
-```
+The K-CAF (Cadastre et Aménagement Foncier) module includes:
 
-### 📋 **Postman Collection**
-**Import our complete test collection:**
-[🚀 KodiBOT API Collection](https://orange-crater-440016.postman.co/workspace/My-Workspace~21e55a88-5c4a-452b-8f18-f41ef6621c15/collection/16472660-6ea73118-b3f0-4d7a-96f2-472e1582798a?action=share&creator=16472660)
+### 🏠 **Property Information**
+- Nature of property (Built/Unbuilt)
+- Main usage (Residential, Commercial, etc.)
+- Building structure and floors
+- Apartment details and occupancy
 
-**Features included:**
-- ✅ All API endpoints with real test data
-- ✅ Pre-configured environment variables
-- ✅ Complete chat flow testing
-- ✅ Account linking scenarios
-- ✅ Error handling tests
-- ✅ Ready-to-use request templates
+### 👤 **Owner Information**
+- Full name and nationality
+- Type of possession (Title deed, Customary right, etc.)
+- Contact information and civil status
 
-### 💬 Chat Test Queries for Dev Team
+### 📍 **Location Details**
+- Complete address (City, Commune, Quarter, Avenue, Number)
+- Building type and classification
 
-Use these test queries with any **pre-linked user** from the test users table:
-
-#### 🔍 **Intent: Profile Information**
-```bash
-# Test profile queries
-curl -X POST http://localhost:8000/chat \
-  -H "Content-Type: application/json" \
-  -d '{"phone_number": "+243842616809", "message": "Quel est mon nom complet?"}'
-
-curl -X POST http://localhost:8000/chat \
-  -H "Content-Type: application/json" \
-  -d '{"phone_number": "+243842616809", "message": "Quelle est mon adresse?"}'
-
-curl -X POST http://localhost:8000/chat \
-  -H "Content-Type: application/json" \
-  -d '{"phone_number": "+243842616809", "message": "Mes informations personnelles"}'
-```
-
-#### 💰 **Intent: Tax Information**
-```bash
-# Test tax queries
-curl -X POST http://localhost:8000/chat \
-  -H "Content-Type: application/json" \
-  -d '{"phone_number": "+243842616809", "message": "Quel est mon solde fiscal?"}'
-
-curl -X POST http://localhost:8000/chat \
-  -H "Content-Type: application/json" \
-  -d '{"phone_number": "+243842616809", "message": "Mes taxes à payer"}'
-
-curl -X POST http://localhost:8000/chat \
-  -H "Content-Type: application/json" \
-  -d '{"phone_number": "+243842616809", "message": "Combien je dois au fisc?"}'
-```
-
-#### 🏠 **Intent: Property/Parcels**
-```bash
-# Test parcel queries
-curl -X POST http://localhost:8000/chat \
-  -H "Content-Type: application/json" \
-  -d '{"phone_number": "+243842616809", "message": "Mes parcelles"}'
-
-curl -X POST http://localhost:8000/chat \
-  -H "Content-Type: application/json" \
-  -d '{"phone_number": "+243842616809", "message": "Quels biens je possède?"}'
-
-curl -X POST http://localhost:8000/chat \
-  -H "Content-Type: application/json" \
-  -d '{"phone_number": "+243842616809", "message": "Informations cadastrales"}'
-```
-
-#### 📋 **Intent: Procedures**
-```bash
-# Test procedure queries
-curl -X POST http://localhost:8000/chat \
-  -H "Content-Type: application/json" \
-  -d '{"phone_number": "+243842616809", "message": "Comment renouveler mon permis?"}'
-
-curl -X POST http://localhost:8000/chat \
-  -H "Content-Type: application/json" \
-  -d '{"phone_number": "+243842616809", "message": "Procédure pour passeport"}'
-
-curl -X POST http://localhost:8000/chat \
-  -H "Content-Type: application/json" \
-  -d '{"phone_number": "+243842616809", "message": "Documents requis pour carte identité"}'
-```
-
-#### 👋 **Intent: Greetings & Social**
-```bash
-# Test greeting/goodbye
-curl -X POST http://localhost:8000/chat \
-  -H "Content-Type: application/json" \
-  -d '{"phone_number": "+243842616809", "message": "Bonjour KodiBOT"}'
-
-curl -X POST http://localhost:8000/chat \
-  -H "Content-Type: application/json" \
-  -d '{"phone_number": "+243842616809", "message": "Merci beaucoup, au revoir"}'
-```
-
-#### ❓ **Intent: Fallback (Low Confidence)**
-```bash
-# Test unclear/ambiguous queries
-curl -X POST http://localhost:8000/chat \
-  -H "Content-Type: application/json" \
-  -d '{"phone_number": "+243842616809", "message": "Aide moi"}'
-
-curl -X POST http://localhost:8000/chat \
-  -H "Content-Type: application/json" \
-  -d '{"phone_number": "+243842616809", "message": "Je veux quelque chose"}'
-```
-
-#### 🚫 **Unlinked User Testing**
-```bash
-# Test unlinked user flow
-curl -X POST http://localhost:8000/chat \
-  -H "Content-Type: application/json" \
-  -d '{"phone_number": "+999999999999", "message": "Bonjour, je veux mes informations"}'
-```
-
-#### 🎯 **Quick Test Script**
-```bash
-#!/bin/bash
-# Run multiple tests quickly
-PHONE="+243842616809"
-BASE_URL="http://localhost:8000"
-
-echo "🧪 Testing KodiBOT Chat Endpoints..."
-
-# Array of test messages
-messages=(
-  "Bonjour"
-  "Quel est mon solde fiscal?"
-  "Mes parcelles"
-  "Mon adresse"
-  "Comment renouveler mon permis?"
-  "Merci, au revoir"
-)
-
-for message in "${messages[@]}"; do
-  echo "📤 Testing: $message"
-  curl -s -X POST "$BASE_URL/chat" \
-    -H "Content-Type: application/json" \
-    -d "{\"phone_number\": \"$PHONE\", \"message\": \"$message\"}" \
-    | jq -r '.response' | head -c 100
-  echo -e "...\n"
-done
-```
+### 🏥 **Compliance & Environment**
+- Physical identification plaque
+- Utility connections (Water, Electricity, Telecom, Sanitation)
+- Distance to health and educational institutions
+- Water access and waste management
+- Compliance status and payment amounts
 
 ---
 
