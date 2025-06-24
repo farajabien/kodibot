@@ -665,7 +665,7 @@ def get_taxes_by_citizen_id(citizen_id: str) -> List[Dict[str, Any]]:
 
 def get_parcels_by_citizen_id(citizen_id: str) -> List[Dict[str, Any]]:
     """Get all parcels for a specific citizen"""
-    return [parcel for parcel in ALL_PARCELS if parcel["citizen_id"] == citizen_id]
+    return [parcel for parcel in ALL_PARCELS if parcel["citizen_id"] == citizen_id] 
 
 def get_kcaf_records_by_parcel(parcel_number: str) -> Optional[Dict[str, Any]]:
     """Get K-CAF record by parcel number"""
